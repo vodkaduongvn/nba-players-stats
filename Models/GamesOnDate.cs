@@ -62,9 +62,9 @@
     public class TeamInfo
     {
         public string Name { get; set; }
-        public string AssistLeader { get; set; }
-        public string PointLeader { get; set; }
-        public string ReboundLeader { get; set; }
+        public string AssistLeader { get; set; } = string.Empty;
+        public string PointLeader { get; set; } = string.Empty;
+        public string ReboundLeader { get; set; } = string.Empty;
         public string Abbr { get; set; }
       
     }

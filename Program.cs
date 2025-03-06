@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
 using NBA.Players.Charts.Extensions;
+using NBA.Players.Charts.Hubs;
 
 namespace NBA.Players.Charts
 {
@@ -27,6 +28,7 @@ namespace NBA.Players.Charts
           
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddSignalR();
 
             builder.Services.AddHttpClient("MyHttpClient")
                 .AddPolicyHandler(ServiceExtension.GetRetryPolicy())
@@ -47,7 +49,8 @@ namespace NBA.Players.Charts
                 {
                     policy.WithOrigins("http://localhost:3000") // Allow specific origin
                           .AllowAnyHeader()                    // Allow any headers
-                          .AllowAnyMethod();                   // Allow any HTTP methods
+                          .AllowAnyMethod()                  // Allow any HTTP methods
+                        .AllowCredentials();
                 });
             });
 
@@ -86,6 +89,7 @@ namespace NBA.Players.Charts
             //    return Results.StatusCode(StatusCodes.Status500InternalServerError);
             //});
 
+            app.MapHub<GameStatsHub>("/gamestatsHub");
 
             app.Run();
         }
