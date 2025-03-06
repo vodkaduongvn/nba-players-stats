@@ -5,6 +5,11 @@ using NBA.Players.Charts.Models;
 using NBA.Players.Charts.PlayerDbContext;
 using NBA.Players.Charts.Services;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Polly;
+using Polly.Extensions.Http;
+using NBA.Players.Charts.Extensions;
 
 namespace NBA.Players.Charts
 {
@@ -22,7 +27,11 @@ namespace NBA.Players.Charts
           
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
-            builder.Services.AddHttpClient();
+
+            builder.Services.AddHttpClient("MyHttpClient")
+                .AddPolicyHandler(ServiceExtension.GetRetryPolicy())
+                .AddPolicyHandler(ServiceExtension.GetCircuitBreakerPolicy());
+
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -30,6 +39,7 @@ namespace NBA.Players.Charts
             builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<ITeamService, TeamService>();
             builder.Services.AddHostedService<PlayerStatsBackgroundService>();
+            builder.Services.AddHostedService<GameStatsBackgroundService>();
             // Add CORS services
             builder.Services.AddCors(options =>
             {

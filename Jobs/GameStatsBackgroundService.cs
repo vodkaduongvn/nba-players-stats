@@ -1,0 +1,57 @@
+﻿using NBA.Players.Charts.Models;
+using System.Text.Json;
+
+namespace NBA.Players.Charts.Jobs
+{
+    public class GameStatsBackgroundService : BackgroundService
+    {
+        private readonly HttpClient _httpClient;
+
+        public GameStatsBackgroundService(IHttpClientFactory httpClientFactory)
+        {
+            _httpClient = httpClientFactory.CreateClient();
+            _httpClient.Timeout = TimeSpan.FromSeconds(120);
+        }
+
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                var gameOnDateStats = new GameOnDateStats();
+                string url = "https://vn.global.nba.com/stats2/scores/daily.json?locale=vn&tz=%2B7&countryCode=VN&state=SG";
+                var response = await _httpClient.GetAsync(url);
+                var content = await response.Content.ReadAsStringAsync();
+                var gameStats = JsonSerializer.Deserialize<GamesOnDate>(content);
+                if (gameStats.payload != null)
+                {
+                    gameOnDateStats.GameDate = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(gameStats.payload.utcMillis)).UtcDateTime;
+                    var games = gameStats.payload.date.games;
+                    foreach (var game in games)
+                    {
+                        var homeTeam = game.homeTeam;
+                        var awayTeam = game.awayTeam;
+                        gameOnDateStats.TeamInfo.Add(new TeamInfo
+                        {
+                            Name = homeTeam.profile.code,
+                            AssistLeader = homeTeam.assistGameLeader.profile.code,
+                            PointLeader = homeTeam.pointGameLeader.profile.code,
+                            ReboundLeader = homeTeam.reboundGameLeader.profile.code,
+                            Abbr = homeTeam.profile.abbr,
+                        });
+                        gameOnDateStats.TeamInfo.Add(new TeamInfo
+                        {
+                            Name = awayTeam.profile.code,
+                            AssistLeader = awayTeam.assistGameLeader.profile.code,
+                            PointLeader = awayTeam.pointGameLeader.profile.code,
+                            ReboundLeader = awayTeam.reboundGameLeader.profile.code,
+                           Abbr = awayTeam.profile.abbr
+                        });
+                    }
+
+                }
+
+                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+            }
+        }
+    }
+}

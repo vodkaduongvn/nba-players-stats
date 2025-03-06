@@ -41,6 +41,7 @@ namespace NBA.Players.Charts.Jobs
         {
             var players = dbContext.Players.ToList();
             var httpClient = _httpClientFactory.CreateClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(120);
 
             foreach (var player in players)
             {

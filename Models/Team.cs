@@ -6,5 +6,6 @@ namespace NBA.Players.Charts.Models
     {
         public string Name { get; init; }
         public string Logo { get; init; }
+        public string Abbr { get; init; }
     }
 }

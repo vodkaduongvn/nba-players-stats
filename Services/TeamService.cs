@@ -25,7 +25,8 @@ namespace NBA.Players.Charts.Services
             {
                 Id = t.Id,
                 Name = t.Name,
-                Logo = t.Logo?? string.Empty
+                Logo = t.Logo?? string.Empty,
+                Abbr = t.TeamCode
             }).OrderBy(x => x.Name)];
         }
     }
