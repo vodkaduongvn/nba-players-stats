@@ -86,7 +86,7 @@ namespace NBA.Players.Charts.Services
                 }
             }
 
-            return last10Games;
+            return [.. last10Games.OrderByDescending(x=>x.PointsAvg)];
         }
 
         public async Task<List<PlayerStatsPerLast10Games>> GetDBStatsLast10GameByTeamIdAsync(Guid teamId)
