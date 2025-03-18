@@ -52,7 +52,8 @@ namespace NBA.Players.Charts.Services
                                     Assists = x.statTotal.assists,
                                     WinOrLoss = x.profile.winOrLoss,
                                     TeamScore = x.profile.teamScore,
-                                    OppTeamName = x.profile.oppTeamProfile.name
+                                    OppTeamName = x.profile.oppTeamProfile.name,
+                                    Mins = x.statTotal.mins,
                                 })
                                 );
 
@@ -71,6 +72,9 @@ namespace NBA.Players.Charts.Services
                         var gameNumber = playerStats.payload.player.stats.regularSeasonStat.playerTeams
                             .LastOrDefault()?.statAverage.games ?? 0;
 
+                        var mins = playerStats.payload.player.stats.regularSeasonStat.playerTeams.
+                            LastOrDefault()?.statAverage?.minsPg ?? 0;
+
                         last10Games.Add(new PlayerStatsPerLast10Games
                         {
                             TeamName = teamName,
@@ -80,6 +84,7 @@ namespace NBA.Players.Charts.Services
                             ReboundsAvg = reboundsAvg,
                             AssistsAvg = assistsAvg,
                             GameNumber = gameNumber,
+                            Mins = mins,
                             PointsPerLast10Games = playerGamesDict.OrderBy(x => x.GameDate).ToList()
                         });
                     }

@@ -10,6 +10,7 @@
         public double ReboundsAvg { get; set; }
         public double AssistsAvg { get; set; }
         public int GameNumber { get; set; }
+        public double Mins { get; set; }
         public List<PointsPerLast10Games>? PointsPerLast10Games { get; set; }
     }
 
@@ -22,5 +23,6 @@
         public string WinOrLoss { get; set; }
         public int TeamScore { get; set; }
         public string OppTeamName { get; set; }
+        public int? Mins { get; set; }
     }
 }
