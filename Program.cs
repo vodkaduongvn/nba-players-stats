@@ -11,6 +11,7 @@ using Polly;
 using Polly.Extensions.Http;
 using NBA.Players.Charts.Extensions;
 using NBA.Players.Charts.Hubs;
+using Microsoft.AspNetCore.Identity;
 
 namespace NBA.Players.Charts
 {
@@ -33,11 +34,17 @@ namespace NBA.Players.Charts
             builder.Services.AddHttpClient("MyHttpClient")
                 .AddPolicyHandler(ServiceExtension.GetRetryPolicy())
                 .AddPolicyHandler(ServiceExtension.GetCircuitBreakerPolicy());
-
+            var cnStr = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(cnStr!);
             });
+
+            builder.Services.AddAuthorization();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(); // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AppDbContext>();
+
             builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<ITeamService, TeamService>();
             builder.Services.AddHostedService<PlayerStatsBackgroundService>();
@@ -47,7 +54,7 @@ namespace NBA.Players.Charts
             {
                 options.AddPolicy("AllowSpecificOrigins", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000") // Allow specific origin
+                    policy.WithOrigins("http://localhost:3000", "http://localhost:5087/") // Allow specific origin
                           .AllowAnyHeader()                    // Allow any headers
                           .AllowAnyMethod()                  // Allow any HTTP methods
                         .AllowCredentials();
@@ -61,11 +68,17 @@ namespace NBA.Players.Charts
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
-                
+
+                app.UseSwagger();
+                app.UseSwaggerUI();
+                app.UseCors(x => x
+                  .AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader());
+
             }
 
-            app.UseSwagger();
-            app.UseSwaggerUI();
+          
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
@@ -90,7 +103,7 @@ namespace NBA.Players.Charts
             //});
 
             app.MapHub<GameStatsHub>("/gamestatsHub");
-
+            app.MapIdentityApi<IdentityUser>();
             app.Run();
         }
     }
