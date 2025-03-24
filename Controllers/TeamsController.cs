@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NBA.Players.Charts.Models;
 using NBA.Players.Charts.Services;
 
 namespace NBA.Players.Charts.Controllers
 {
+    [Authorize]
     public class TeamsController : Controller
     {
         [HttpGet("teams", Name = "GetAllAsync")]

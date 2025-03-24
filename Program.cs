@@ -1,17 +1,16 @@
 
 using Microsoft.EntityFrameworkCore;
 using NBA.Players.Charts.Jobs;
-using NBA.Players.Charts.Models;
 using NBA.Players.Charts.PlayerDbContext;
 using NBA.Players.Charts.Services;
-using System.Text.Json;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Polly;
-using Polly.Extensions.Http;
 using NBA.Players.Charts.Extensions;
 using NBA.Players.Charts.Hubs;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Identity.Web;
 
 namespace NBA.Players.Charts
 {
@@ -41,26 +40,18 @@ namespace NBA.Players.Charts
             });
 
             builder.Services.AddAuthorization();
+
+            
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+                .AddEntityFrameworkStores<AppDbContext>();
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(); // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AppDbContext>();
 
             builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<ITeamService, TeamService>();
             builder.Services.AddHostedService<PlayerStatsBackgroundService>();
             builder.Services.AddHostedService<GameStatsBackgroundService>();
-            // Add CORS services
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowSpecificOrigins", policy =>
-                {
-                    policy.WithOrigins("http://localhost:3000", "http://localhost:5087/") // Allow specific origin
-                          .AllowAnyHeader()                    // Allow any headers
-                          .AllowAnyMethod()                  // Allow any HTTP methods
-                        .AllowCredentials();
-                });
-            });
-
 
             var app = builder.Build();
 
@@ -71,20 +62,23 @@ namespace NBA.Players.Charts
 
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                app.UseCors(x => x
-                  .AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader());
+             
 
             }
+            app.UseCors(x => x
+                 .WithOrigins("http://localhost:3000", "http://localhost:5087")
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials());
 
-          
+
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             // Use CORS
-            app.UseCors("AllowSpecificOrigins");
+            //app.UseCors("AllowAll");
 
             app.MapControllers();
             //app.MapGet("/api/players-stats", async (HttpClient httpClient) =>

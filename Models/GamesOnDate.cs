@@ -66,6 +66,9 @@
         public string PointLeader { get; set; } = string.Empty;
         public string ReboundLeader { get; set; } = string.Empty;
         public string Abbr { get; set; }
+        public string Position { get; set; }
+        public int? Mins { get; set; }
+        public int? Points { get; set; }
       
     }
 }

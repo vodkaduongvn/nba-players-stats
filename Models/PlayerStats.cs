@@ -72,7 +72,7 @@
         public double? ftaPg { get; set; }
         public double? ftmPg { get; set; }
         public double? ftpct { get; set; }
-        public int games { get; set; }
+        public int? games { get; set; }
         public object gamesStarted { get; set; }
         public double? minsPg { get; set; }
         public double? offRebsPg { get; set; }
