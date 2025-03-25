@@ -46,9 +46,9 @@ namespace NBA.Players.Charts.Jobs
                             PointLeader = homeTeam.pointGameLeader?.profile.code,
                             ReboundLeader = homeTeam.reboundGameLeader?.profile.code,
                             Abbr = homeTeam.profile.abbr,
-                            Position = homeTeam.pointGameLeader.profile.position,
-                            Mins = homeTeam.pointGameLeader.statTotal.mins,
-                            Points = homeTeam.pointGameLeader.statTotal?.points,
+                            Position = homeTeam.pointGameLeader?.profile.position,
+                            Mins = homeTeam.pointGameLeader?.statTotal.mins,
+                            Points = homeTeam.pointGameLeader?.statTotal?.points,
                         });
                         gameOnDateStats.TeamInfo.Add(new TeamInfo
                         {
@@ -57,9 +57,9 @@ namespace NBA.Players.Charts.Jobs
                             PointLeader = awayTeam.pointGameLeader?.profile.code,
                             ReboundLeader = awayTeam.reboundGameLeader?.profile.code,
                            Abbr = awayTeam.profile.abbr,
-                            Position = awayTeam.pointGameLeader.profile.position,
-                            Mins = awayTeam.pointGameLeader.statTotal.mins,
-                            Points = awayTeam.pointGameLeader.statTotal?.points,
+                            Position = awayTeam.pointGameLeader?.profile.position,
+                            Mins = awayTeam.pointGameLeader?.statTotal.mins,
+                            Points = awayTeam.pointGameLeader?.statTotal?.points,
                         });
                     }
 

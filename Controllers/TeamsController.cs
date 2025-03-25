@@ -5,7 +5,7 @@ using NBA.Players.Charts.Services;
 
 namespace NBA.Players.Charts.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class TeamsController : Controller
     {
         [HttpGet("teams", Name = "GetAllAsync")]
@@ -13,6 +13,13 @@ namespace NBA.Players.Charts.Controllers
         {
             var teams = await teamService.GetTeamsAsync();
             return teams;
+        }
+
+        [HttpGet("team-stats/{teamId:guid}", Name = "GetTeamStatById")]
+        public async Task<List<ScoreLast5Game>> Get([FromRoute] Guid teamId, [FromServices] ITeamService teamService)
+        {
+            var last5Games = await teamService.GetTeamStatsLast5GameByTeamIdAsync(teamId);
+            return last5Games;
         }
     }
 }

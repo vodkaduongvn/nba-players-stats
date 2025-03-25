@@ -109,6 +109,8 @@
         public Season season { get; set; }
         public LeagueSeasonAverage leagueSeasonAverage { get; set; }
         public Player player { get; set; }
+        public Profile profile { get; set; }
+        public List<MonthGroup> monthGroups { get; set; }
     }
 
     public class Player
