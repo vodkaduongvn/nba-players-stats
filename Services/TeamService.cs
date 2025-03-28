@@ -1,16 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NBA.Players.Charts.Models;
 using NBA.Players.Charts.PlayerDbContext;
-using System.Net.Http;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace NBA.Players.Charts.Services
 {
     public interface ITeamService
     {
         Task<List<Team>> GetTeamsAsync();
-        Task<List<ScoreLast5Game>> GetTeamStatsLast5GameByTeamIdAsync(Guid teamId);
+        Task<TeamGameStats> GetTeamStatsLast5GameByTeamIdAsync(Guid teamId);
     }
 
     public class TeamService: ITeamService
@@ -37,9 +35,9 @@ namespace NBA.Players.Charts.Services
             }).OrderBy(x => x.Name)];
         }
 
-        public async Task<List<ScoreLast5Game>> GetTeamStatsLast5GameByTeamIdAsync(Guid teamId)
+        public async Task<TeamGameStats> GetTeamStatsLast5GameByTeamIdAsync(Guid teamId)
         {
-            var last5Games = new List<ScoreLast5Game>();
+            var teamGameStats = new TeamGameStats();
 
             var team = await _dbContext.Teams.FirstOrDefaultAsync(x => x.Id == teamId);
 
@@ -57,7 +55,7 @@ namespace NBA.Players.Charts.Services
                     {
                         if (team.TeamCode2 == game.homeTeam.profile.code)
                         {
-                            last5Games.Add(new ScoreLast5Game
+                            teamGameStats.ScoreLast5Games.Add(new ScoreLast5Game
                             {
                                 GameDate = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(game.profile.utcMillis)).UtcDateTime,
                                 TeamScore = game.boxscore.homeScore,
@@ -69,7 +67,7 @@ namespace NBA.Players.Charts.Services
                         }
                         else
                         {
-                            last5Games.Add(new ScoreLast5Game
+                            teamGameStats.ScoreLast5Games.Add(new ScoreLast5Game
                             {
                                 GameDate = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(game.profile.utcMillis)).UtcDateTime,
                                 TeamScore = game.boxscore.awayScore,
@@ -83,7 +81,13 @@ namespace NBA.Players.Charts.Services
                 }
             }
 
-            return last5Games;
+            teamGameStats.TeamName = team.Name;
+
+            // TODO: refactor to get avg from NBA
+            teamGameStats.ScoreAvg = teamGameStats.ScoreLast5Games.Select(x=>x.TeamScore).Average();
+            teamGameStats.ScoreLast5Games = [.. teamGameStats.ScoreLast5Games.OrderBy(x => x.GameDate)];
+
+            return teamGameStats;
         }
     }
 }

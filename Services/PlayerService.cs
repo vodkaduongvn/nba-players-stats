@@ -53,6 +53,7 @@ namespace NBA.Players.Charts.Services
                                     WinOrLoss = x.profile.winOrLoss,
                                     TeamScore = x.profile.teamScore,
                                     OppTeamName = x.profile.oppTeamProfile.name,
+                                    OppTeamScore = x.profile.oppTeamScore,
                                     Mins = x.statTotal.mins,
                                 })
                                 );

@@ -33,7 +33,7 @@ namespace NBA.Players.Charts.Jobs
                 var gameStats = JsonSerializer.Deserialize<GamesOnDate>(content);
                 if (gameStats.payload != null)
                 {
-                    gameOnDateStats.GameDate = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(gameStats.payload.utcMillis)).UtcDateTime;
+                    gameOnDateStats.GameDate = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(gameStats.payload.utcMillis)).UtcDateTime.AddDays(1);// fix VN Time
                     var games = gameStats.payload.date.games;
                     foreach (var game in games)
                     {

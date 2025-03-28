@@ -124,4 +124,11 @@ namespace NBA.Players.Charts.Models
         public DateTime GameDate { get; set; }
         public string WinOrLose { get; set; }
     }
+
+    public class TeamGameStats
+    {
+        public string TeamName { get; set; }
+        public double ScoreAvg { get; set; }
+        public List<ScoreLast5Game> ScoreLast5Games { get; set; } = [];
+    }
 }

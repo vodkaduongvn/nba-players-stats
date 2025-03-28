@@ -51,7 +51,7 @@ namespace NBA.Players.Charts
             builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<ITeamService, TeamService>();
             builder.Services.AddHostedService<PlayerStatsBackgroundService>();
-            builder.Services.AddHostedService<GameStatsBackgroundService>();
+            //builder.Services.AddHostedService<GameStatsBackgroundService>();
 
             var app = builder.Build();
 
@@ -62,15 +62,16 @@ namespace NBA.Players.Charts
 
                 app.UseSwagger();
                 app.UseSwaggerUI();
-             
 
-            }
-            app.UseCors(x => x
-                 .WithOrigins("http://localhost:3000", "http://localhost:5087")
+                app.UseCors(x => x
+                 .WithOrigins("http://localhost:3000", "http://localhost:5087", "https://localhost:7021")
                .AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials());
+            }
 
+
+            //app.UseCors("AllowSpecificOrigins");
 
             app.UseHttpsRedirection();
 

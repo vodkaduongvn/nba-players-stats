@@ -23,6 +23,7 @@
         public string WinOrLoss { get; set; }
         public int TeamScore { get; set; }
         public string OppTeamName { get; set; }
+        public int OppTeamScore { get; set; }
         public int? Mins { get; set; }
     }
 }
